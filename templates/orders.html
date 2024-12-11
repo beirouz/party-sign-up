@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>View Orders</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="w3-bar w3-red">
+  <a href="/" class="w3-bar-item w3-button">Home</a>
+  <a href="/link1" class="w3-bar-item w3-button">Pizza</a>
+  <a href="/link2" class="w3-bar-item w3-button">View Orders</a>
+  <a href="/link3" class="w3-bar-item w3-button">Appetizers</a>
+  <a href="/link4" class="w3-bar-item w3-button">Expenses</a>
+  <a href="/logout" class="w3-bar-item w3-button">Logout</a>
+</div>
+
+<!-- Content -->
+<div class="w3-container w3-center">
+  <h2>Order List</h2>
+  <table class="w3-table w3-bordered">
+    <thead>
+      <tr>
+        <th>Username</th>
+        <th>Crust</th>
+        <th>Sauce</th>
+        <th>Toppings</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for order in orders %}
+        <tr>
+          <td>{{ order['username'] }}</td>
+          <td>{{ order['crust'] }}</td>
+          <td>{{ order['sauce'] }}</td>
+          <td>{{ ', '.join(order['toppings']) }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>

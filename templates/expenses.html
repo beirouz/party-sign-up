@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Expenses Page</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body class="w3-dark-gray">
+  <!-- Navbar -->
+  <div class="w3-bar w3-black">
+    <a href="/" class="w3-bar-item w3-button">Home</a>
+    <a href="/dinner" class="w3-bar-item w3-button">Dinner</a>
+    <a href="/appetizer" class="w3-bar-item w3-button">Appetizer</a>
+    <a href="/expenses" class="w3-bar-item w3-button">Expenses</a>
+    <a href="/logout" class="w3-bar-item w3-button">Logout</a>
+  </div>
+
+  <!-- Expenses Section -->
+  <div class="w3-container w3-padding">
+    <h3>Event Expenses</h3>
+
+    <!-- Error or Success Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <p class="w3-text-{{ 'red' if category == 'error' else 'green' }}">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+	<!-- Expense Management Options -->
+	<div class="w3-container w3-padding w3-light-gray w3-margin-bottom" style="display: flex; justify-content: space-between; align-items: flex-start;">
+
+	  <!-- Add Expense Form -->
+	  <div style="flex: 1; margin-right: 10px;">
+		<h4>Add Expense</h4>
+		<form method="POST" action="/expenses">
+		  <input type="hidden" name="add_expense">
+		  <!-- Push down the input boxes using margin -->
+		  <input type="text" name="item_name" class="w3-input w3-border w3-light-gray w3-margin-top" style="margin-top: 10px;" placeholder="Enter item name" required>
+		  <input type="number" name="amount" step="0.01" class="w3-input w3-border w3-light-gray w3-margin-top" placeholder="Enter item amount" required>
+		  <button type="submit" class="w3-button w3-green w3-margin-top">Add Expense</button>
+		</form>
+	  </div>
+
+	  <!-- Edit Expense Form -->
+	  <div style="flex: 1; margin: 0 10px;">
+		<h4>Edit Expense</h4>
+		<form method="POST" action="/expenses">
+		  <input type="hidden" name="edit_expense">
+		  <select name="column_to_edit" class="w3-select w3-border w3-margin-top" required>
+			<option value="" disabled selected>Select expense column to edit</option>
+			{% for column in columns if column != "Total" %}
+			  <option value="{{ column }}">{{ column }}</option>
+			{% endfor %}
+		  </select>
+		  <input type="number" name="updated_amount" step="0.01" class="w3-input w3-border w3-light-gray w3-margin-top" placeholder="Enter updated amount" required>
+		  <button type="submit" class="w3-button w3-blue w3-margin-top">Edit Expense</button>
+		</form>
+	  </div>
+
+	  <!-- Remove Expense Form -->
+	  <div style="flex: 1; margin-left: 10px;">
+		<h4>Remove Expense</h4>
+		<form method="POST" action="/expenses">
+		  <input type="hidden" name="remove_expense">
+		  <select name="column_to_remove" class="w3-select w3-border w3-margin-top" required>
+			<option value="" disabled selected>Select expense column to remove</option>
+			{% for column in columns if column != "Total" %}
+			  <option value="{{ column }}">{{ column }}</option>
+			{% endfor %}
+		  </select>
+		  <button type="submit" class="w3-button w3-red w3-margin-top">Remove Expense</button>
+		</form>
+	  </div>
+	</div>
+
+
+
+
+    <!-- Expense Table -->
+    <div class="w3-container w3-padding w3-white w3-margin-top">
+      <h3>Expense Table</h3>
+      <table class="w3-table w3-bordered">
+        <thead>
+          <tr>
+            <th>User</th>
+            {% for column in columns %}
+              <th>{{ column }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for user, row in table_data.items() %}
+            <tr>
+              <td>{{ user }}</td>
+              {% for column in columns %}
+                <td>{{ row[column] }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

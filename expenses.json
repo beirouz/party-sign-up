@@ -1,0 +1,14 @@
+{
+    "user1": {
+        "Total": -130.0,
+        "Party Room-user2": -100.0,
+        "Drink-user2": -80.0,
+        "Pizza-user1": 50.0
+    },
+    "user2": {
+        "Total": 130.0,
+        "Party Room-user2": 100.0,
+        "Drink-user2": 80.0,
+        "Pizza-user1": -50.0
+    }
+}

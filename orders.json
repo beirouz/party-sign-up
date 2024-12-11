@@ -1,0 +1,20 @@
+[
+    {
+        "username": "user1",
+        "crust": "Thin Crust",
+        "sauce": "Barbecue Sauce",
+        "toppings": [
+            "Cheese",
+            "Pepperoni"
+        ]
+    },
+    {
+        "username": "user2",
+        "crust": "Thick Crust",
+        "sauce": "Tomato Sauce",
+        "toppings": [
+            "Mushrooms",
+            "Bacon"
+        ]
+    }
+]

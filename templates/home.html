@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home Page</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body class="w3-dark-gray">
+
+<!-- Navbar -->
+<div class="w3-bar w3-black">
+  <a href="/" class="w3-bar-item w3-button">Home</a>
+  <a href="/dinner" class="w3-bar-item w3-button">Dinner</a>
+  <a href="/appetizer" class="w3-bar-item w3-button">Appetizer</a>
+  <a href="/expenses" class="w3-bar-item w3-button">Expenses</a>
+  {% if logged_in %}
+    <a href="/logout" class="w3-bar-item w3-button">Logout</a>
+  {% endif %}
+</div>
+
+<!-- Content -->
+<div class="w3-container w3-center">
+  {% if logged_in %}
+    <h2>Welcome, {{ username }}!</h2>
+    
+    <!-- Event Details Card -->
+	<div class="w3-card-2" style="width: 40%; margin: auto; text-align: center;">
+	  <header class="w3-container w3-green">
+		<h1>Event Details</h1>
+	  </header>
+
+	  <div class="w3-container" style="background-color: #a9a9a9; padding: 20px;">
+		<p><span class="w3-text-black" style="font-weight: bold;">Address:</span> {{ event.address }}</p>
+		<p><span class="w3-text-black" style="font-weight: bold;">Agenda:</span> {{ event.agenda }}</p>
+		<p><span class="w3-text-black" style="font-weight: bold;">Timing:</span> {{ event.timing }}</p>
+	  </div>
+	</div>
+
+    
+  {% else %}
+    <h2>Please Log In</h2>
+    <form method="POST" action="/">
+      <input type="text" name="username" placeholder="Username" required>
+      <input type="password" name="password" placeholder="Password" required>
+      <button type="submit" class="w3-button w3-red w3-margin-top">Log In</button>
+    </form>
+    {% if error %}
+      <p class="w3-text-red">{{ error }}</p>
+    {% endif %}
+  {% endif %}
+</div>
+
+</body>
+</html>

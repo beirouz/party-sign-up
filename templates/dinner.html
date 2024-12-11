@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dinner Page</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body class="w3-dark-gray">
+  <!-- Navbar -->
+  <div class="w3-bar w3-black">
+    <a href="/" class="w3-bar-item w3-button">Home</a>
+    <a href="/dinner" class="w3-bar-item w3-button">Dinner</a>
+    <a href="/appetizer" class="w3-bar-item w3-button">Appetizer</a>
+    <a href="/expenses" class="w3-bar-item w3-button">Expenses</a>
+    <a href="/logout" class="w3-bar-item w3-button">Logout</a>
+  </div>
+
+  <!-- Pizza Order Section -->
+  <div class="w3-container">
+    {% if user_order %}
+      <h3>Current Order</h3>
+      <p><strong>Crust:</strong> {{ user_order.crust }}</p>
+      <p><strong>Sauce:</strong> {{ user_order.sauce }}</p>
+      <p><strong>Toppings:</strong> {{ user_order.toppings | join(', ') }}</p>
+    {% endif %}
+
+    <h3>{% if user_order %}Edit Your Order{% else %}Place Your Order{% endif %}</h3>
+    <form method="POST">
+      <label for="crust">Select Crust:</label>
+      <select name="crust" id="crust" class="w3-select" style="width: 200px;" required>
+        {% for crust in crust_types %}
+          <option value="{{ crust }}" {% if user_order and user_order.crust == crust %}selected{% endif %}>{{ crust }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="sauce">Select Sauce:</label>
+      <select name="sauce" id="sauce" class="w3-select" style="width: 200px;" required>
+        {% for sauce in sauces %}
+          <option value="{{ sauce }}" {% if user_order and user_order.sauce == sauce %}selected{% endif %}>{{ sauce }}</option>
+        {% endfor %}
+      </select><br><br>
+
+      <label for="toppings">Select Toppings (Choose up to 4):</label><br>
+      {% for topping in topping_options %}
+        <input type="checkbox" name="toppings" value="{{ topping }}" {% if user_order and topping in user_order.toppings %}checked{% endif %}> {{ topping }}<br>
+      {% endfor %}<br>
+
+      <button type="submit" class="w3-button w3-green">Submit Order</button>
+    </form>
+
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <!-- Orders Table Section -->
+    <h3>All Orders</h3>
+    <table class="w3-table w3-bordered">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Crust</th>
+          <th>Sauce</th>
+          <th>Toppings</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+          <tr>
+            <td>{{ order['username'] }}</td>
+            <td>{{ order['crust'] }}</td>
+            <td>{{ order['sauce'] }}</td>
+            <td>{{ ', '.join(order['toppings']) }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
