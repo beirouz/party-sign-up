@@ -1,57 +1,112 @@
 {
     "user1": {
-        "Total": -25.45,
+        "Total": 557.46,
         "Santa-user2": -9.09,
-        "Pizza-user6": -16.36
+        "Pizza-user6": -16.36,
+        "Item1-user1": 109.09,
+        "Item2-user1": 136.36,
+        "Item3-user1": 190.91,
+        "Item4-user1": 122.91,
+        "Item5-user1": 23.64
     },
     "user2": {
-        "Total": 74.55,
+        "Total": 16.26,
         "Santa-user2": 90.91,
-        "Pizza-user6": -16.36
+        "Pizza-user6": -16.36,
+        "Item1-user1": -10.91,
+        "Item2-user1": -13.64,
+        "Item3-user1": -19.09,
+        "Item4-user1": -12.29,
+        "Item5-user1": -2.36
     },
     "user3": {
-        "Total": -25.45,
+        "Total": -83.74,
         "Santa-user2": -9.09,
-        "Pizza-user6": -16.36
+        "Pizza-user6": -16.36,
+        "Item1-user1": -10.91,
+        "Item2-user1": -13.64,
+        "Item3-user1": -19.09,
+        "Item4-user1": -12.29,
+        "Item5-user1": -2.36
     },
     "user4": {
-        "Total": -25.45,
+        "Total": -83.74,
         "Santa-user2": -9.09,
-        "Pizza-user6": -16.36
+        "Pizza-user6": -16.36,
+        "Item1-user1": -10.91,
+        "Item2-user1": -13.64,
+        "Item3-user1": -19.09,
+        "Item4-user1": -12.29,
+        "Item5-user1": -2.36
     },
     "user5": {
-        "Total": -25.45,
+        "Total": -83.74,
         "Santa-user2": -9.09,
-        "Pizza-user6": -16.36
+        "Pizza-user6": -16.36,
+        "Item1-user1": -10.91,
+        "Item2-user1": -13.64,
+        "Item3-user1": -19.09,
+        "Item4-user1": -12.29,
+        "Item5-user1": -2.36
     },
     "user6": {
-        "Total": 154.55,
+        "Total": 96.26,
         "Santa-user2": -9.09,
-        "Pizza-user6": 163.64
+        "Pizza-user6": 163.64,
+        "Item1-user1": -10.91,
+        "Item2-user1": -13.64,
+        "Item3-user1": -19.09,
+        "Item4-user1": -12.29,
+        "Item5-user1": -2.36
     },
     "user7": {
-        "Total": -25.45,
+        "Total": -83.74,
         "Santa-user2": -9.09,
-        "Pizza-user6": -16.36
+        "Pizza-user6": -16.36,
+        "Item1-user1": -10.91,
+        "Item2-user1": -13.64,
+        "Item3-user1": -19.09,
+        "Item4-user1": -12.29,
+        "Item5-user1": -2.36
     },
     "user8": {
-        "Total": -25.45,
+        "Total": -83.74,
         "Santa-user2": -9.09,
-        "Pizza-user6": -16.36
+        "Pizza-user6": -16.36,
+        "Item1-user1": -10.91,
+        "Item2-user1": -13.64,
+        "Item3-user1": -19.09,
+        "Item4-user1": -12.29,
+        "Item5-user1": -2.36
     },
     "user9": {
-        "Total": -25.45,
+        "Total": -83.74,
         "Santa-user2": -9.09,
-        "Pizza-user6": -16.36
+        "Pizza-user6": -16.36,
+        "Item1-user1": -10.91,
+        "Item2-user1": -13.64,
+        "Item3-user1": -19.09,
+        "Item4-user1": -12.29,
+        "Item5-user1": -2.36
     },
     "user10": {
-        "Total": -25.45,
+        "Total": -83.74,
         "Santa-user2": -9.09,
-        "Pizza-user6": -16.36
+        "Pizza-user6": -16.36,
+        "Item1-user1": -10.91,
+        "Item2-user1": -13.64,
+        "Item3-user1": -19.09,
+        "Item4-user1": -12.29,
+        "Item5-user1": -2.36
     },
     "user11": {
-        "Total": -25.45,
+        "Total": -83.74,
         "Santa-user2": -9.09,
-        "Pizza-user6": -16.36
+        "Pizza-user6": -16.36,
+        "Item1-user1": -10.91,
+        "Item2-user1": -13.64,
+        "Item3-user1": -19.09,
+        "Item4-user1": -12.29,
+        "Item5-user1": -2.36
     }
 }
