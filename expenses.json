@@ -1,14 +1,57 @@
 {
     "user1": {
-        "Total": -130.0,
-        "Party Room-user2": -100.0,
-        "Drink-user2": -80.0,
-        "Pizza-user1": 50.0
+        "Total": -25.45,
+        "Santa-user2": -9.09,
+        "Pizza-user6": -16.36
     },
     "user2": {
-        "Total": 130.0,
-        "Party Room-user2": 100.0,
-        "Drink-user2": 80.0,
-        "Pizza-user1": -50.0
+        "Total": 74.55,
+        "Santa-user2": 90.91,
+        "Pizza-user6": -16.36
+    },
+    "user3": {
+        "Total": -25.45,
+        "Santa-user2": -9.09,
+        "Pizza-user6": -16.36
+    },
+    "user4": {
+        "Total": -25.45,
+        "Santa-user2": -9.09,
+        "Pizza-user6": -16.36
+    },
+    "user5": {
+        "Total": -25.45,
+        "Santa-user2": -9.09,
+        "Pizza-user6": -16.36
+    },
+    "user6": {
+        "Total": 154.55,
+        "Santa-user2": -9.09,
+        "Pizza-user6": 163.64
+    },
+    "user7": {
+        "Total": -25.45,
+        "Santa-user2": -9.09,
+        "Pizza-user6": -16.36
+    },
+    "user8": {
+        "Total": -25.45,
+        "Santa-user2": -9.09,
+        "Pizza-user6": -16.36
+    },
+    "user9": {
+        "Total": -25.45,
+        "Santa-user2": -9.09,
+        "Pizza-user6": -16.36
+    },
+    "user10": {
+        "Total": -25.45,
+        "Santa-user2": -9.09,
+        "Pizza-user6": -16.36
+    },
+    "user11": {
+        "Total": -25.45,
+        "Santa-user2": -9.09,
+        "Pizza-user6": -16.36
     }
 }

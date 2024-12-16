@@ -5,7 +5,17 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # user data (username, password)
-users = {"user1": "pass!", "user2": "pass@"}
+users = {"user1": "pass!", 
+         "user2": "pass@",
+         "user3": "pass#",
+         "user4": "pass$",
+         "user5": "pass%",
+         "user6": "pass^",
+         "user7": "pass&",
+         "user8": "pass*",
+         "user9": "pass(",
+         "user10": "pass)",
+         "user11": "pass+"}
 
 # event details
 event_details = {
@@ -191,9 +201,9 @@ def expenses():
 
                     # Update totals
                     for user in users:
-                        table_data[user]["Total"] = sum(
+                        table_data[user]["Total"] = round(sum(
                             value for key, value in table_data[user].items() if key != "Total"
-                        )
+                        ), 2)
 
                     # Save the updated data
                     save_expenses(table_data)
@@ -221,9 +231,9 @@ def expenses():
                     table_data[username][column_to_edit] = y
 
                     for user in users:
-                        table_data[user]["Total"] = sum(
+                        table_data[user]["Total"] = round(sum(
                             value for key, value in table_data[user].items() if key != "Total"
-                        )
+                        ), 2)
 
                     save_expenses(table_data)
                     flash("Expense updated successfully!", "success")
@@ -244,9 +254,9 @@ def expenses():
 
                     # Recalculate totals for all users
                     for user in users:
-                        table_data[user]["Total"] = sum(
+                        table_data[user]["Total"] = round(sum(
                             value for key, value in table_data[user].items() if key != "Total"
-                        )
+                        ), 2)
 
                     save_expenses(table_data)
                     flash("Expense removed successfully!", "success")
