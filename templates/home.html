@@ -5,6 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Home Page</title>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+    /* Responsive Design for Event Card */
+    .event-card {
+      width: 100%;
+      max-width: 500px; /* Limits the size on large screens */
+      margin: 20px auto; /* Centering with top spacing */
+    }
+
+    @media screen and (max-width: 600px) {
+      .event-card {
+        padding: 10px; /* Add spacing for small screens */
+      }
+    }
+  </style>
 </head>
 <body class="w3-dark-gray">
 
@@ -25,24 +39,23 @@
     <h2>Welcome, {{ username }}!</h2>
     
     <!-- Event Details Card -->
-	<div class="w3-card-2" style="width: 40%; margin: auto; text-align: center;">
-	  <header class="w3-container w3-green">
-		<h1>Event Details</h1>
-	  </header>
+    <div class="w3-card-2 event-card">
+      <header class="w3-container w3-green">
+        <h1>Event Details</h1>
+      </header>
 
-	  <div class="w3-container" style="background-color: #a9a9a9; padding: 20px;">
-		<p><span class="w3-text-black" style="font-weight: bold;">Address:</span> {{ event.address }}</p>
-		<p><span class="w3-text-black" style="font-weight: bold;">Agenda:</span> {{ event.agenda }}</p>
-		<p><span class="w3-text-black" style="font-weight: bold;">Timing:</span> {{ event.timing }}</p>
-	  </div>
-	</div>
+      <div class="w3-container" style="background-color: #a9a9a9; padding: 20px;">
+        <p><span class="w3-text-black" style="font-weight: bold;">Address:</span> {{ event.address }}</p>
+        <p><span class="w3-text-black" style="font-weight: bold;">Agenda:</span> {{ event.agenda }}</p>
+        <p><span class="w3-text-black" style="font-weight: bold;">Timing:</span> {{ event.timing }}</p>
+      </div>
+    </div>
 
-    
   {% else %}
     <h2>Please Log In</h2>
     <form method="POST" action="/">
-      <input type="text" name="username" placeholder="Username" required>
-      <input type="password" name="password" placeholder="Password" required>
+      <input type="text" name="username" placeholder="Username" class="w3-input w3-border" required>
+      <input type="password" name="password" placeholder="Password" class="w3-input w3-border w3-margin-top" required>
       <button type="submit" class="w3-button w3-red w3-margin-top">Log In</button>
     </form>
     {% if error %}
