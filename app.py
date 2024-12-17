@@ -5,23 +5,23 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # user data (username, password)
-users = {"user1": "pass!", 
-         "user2": "pass@",
-         "user3": "pass#",
-         "user4": "pass$",
-         "user5": "pass%",
-         "user6": "pass^",
-         "user7": "pass&",
-         "user8": "pass*",
-         "user9": "pass(",
-         "user10": "pass)",
-         "user11": "pass+"}
+users = {"forouz": "pass!", 
+         "marzieh": "pass!",
+         "elahe": "pass!",
+         "mina": "pass!",
+         "vida": "pass!",
+         "zahra": "pass!",
+         "bahar": "pass!",
+         "ela": "pass!",
+         "elmira": "pass!",
+         "kiana": "pass!",
+         "sanaz": "pass!"}
 
 # event details
 event_details = {
-    'address': '123 Party St, Partyville',
+    'address': 'Radiance Party Room, 23 Sheppard Avenue East, North York, ON',
     'agenda': 'Food, Drinks, Games, Dancing',
-    'timing': '7:00 PM - 11:00 PM'
+    'timing': 'TBD (Most likely 5:00 pm)'
 }
 
 # File to store orders
@@ -64,9 +64,21 @@ def home():
 def dinner():
     if 'logged_in' in session and session['logged_in']:
         # Define the pizza options
-        crust_types = ['Thin Crust', 'Thick Crust', 'Gluten-Free Crust']
-        sauces = ['Tomato Sauce', 'Barbecue Sauce', 'Pesto Sauce']
-        topping_options = ['Cheese', 'Pepperoni', 'Mushrooms', 'Onions', 'Olives', 'Bacon', 'Peppers']
+        crust_types = ['Thin Crust', 'Regular Crust', 'Thick Crust']
+        sauces = ['Tomato Sauce', 'No Sauce']
+        topping_options = ['Fire Roasted Red Peppers', 
+                           'Fresh Mushrooms', 
+                           'Green Olives', 
+                           'Green Peppers', 
+                           'Red Onion', 
+                           'Roasted Garlic', 
+                           'Roma Tomatos',
+                           'Sun Dried Tomatos',
+                           'Butter Chicken',
+                           'Grilled Chicken',
+                           'Bacon Strips',
+                           'Feta Cheese',
+                           'Parmesan Cheese']
 
         # Load existing orders
         orders = load_orders()
