@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Party Picks</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body class="w3-dark-gray">
+  <!-- Navbar -->
+  <div class="w3-bar w3-black">
+    <a href="/" class="w3-bar-item w3-button">Home</a>
+    <a href="/dinner" class="w3-bar-item w3-button">Dinner</a>
+    <a href="/partypicks" class="w3-bar-item w3-button">Party-Picks</a>
+    <a href="/expenses" class="w3-bar-item w3-button">Expenses</a>
+    <a href="/logout" class="w3-bar-item w3-button">Logout</a>
+  </div>
+
+  <!-- Party Picks Section -->
+  <div class="w3-container w3-padding">
+    <h3>Choose a category and submit your item!</h3>
+
+    <!-- Error Message -->
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <!-- Category Selection Form -->
+    <form method="POST" action="/partypicks">
+      <div class="w3-margin-bottom">
+        <label>
+          <input 
+            type="radio" 
+            name="category" 
+            value="Appetizer" 
+            {% if selected_category == 'Appetizer' %}checked{% endif %}>
+          Appetizer
+        </label>
+        <label>
+          <input 
+            type="radio" 
+            name="category" 
+            value="Dessert" 
+            {% if selected_category == 'Dessert' %}checked{% endif %}>
+          Dessert
+        </label>
+      </div>
+      <input 
+        type="text" 
+        name="item" 
+        class="w3-input w3-border w3-light-gray" 
+        placeholder="Enter your item here" 
+        required>
+      <button type="submit" class="w3-button w3-green w3-margin-top">Submit</button>
+    </form>
+
+    <!-- Appetizer List -->
+    <div class="w3-container w3-padding w3-white w3-margin-top w3-responsive">
+      <h3>Appetizer List</h3>
+      <table class="w3-table w3-bordered w3-striped">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Appetizer</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in appetizer_list %}
+            <tr>
+              <td>{{ entry['username'] }}</td>
+              <td>{{ entry['item'] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Dessert List -->
+    <div class="w3-container w3-padding w3-white w3-margin-top w3-responsive">
+      <h3>Dessert List</h3>
+      <table class="w3-table w3-bordered w3-striped">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Dessert</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in dessert_list %}
+            <tr>
+              <td>{{ entry['username'] }}</td>
+              <td>{{ entry['item'] }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

@@ -122,46 +122,78 @@ def dinner():
 
     return redirect(url_for('home'))  # Redirect to login if not logged in
 
-#Route for Appetizer
-@app.route('/appetizer', methods=['GET', 'POST'])
-def appetizer():
+# Route for Appetizer and Dessert
+@app.route('/partypicks', methods=['GET', 'POST'])
+def partypicks():
     if 'logged_in' in session and session['logged_in']:
-        # Load existing appetizers
+        # Load existing appetizers and desserts
         appetizers = load_appetizers()
+        desserts = load_desserts()
 
-        if request.method == 'POST':
-            # Get the appetizer from the form
-            appetizer = request.form['appetizer'].strip()
+        # Initialize lists to display both categories
+        appetizer_list = appetizers
+        dessert_list = desserts
 
-            if not appetizer:
+        selected_category = request.form.get('category', 'Appetizer')
+
+        if request.method == 'POST' and 'item' in request.form:
+            # Get the entered item
+            item = request.form['item'].strip()
+
+            if not item:
                 return render_template(
-                    'appetizer.html',
-                    error="You must enter an appetizer.",
-                    appetizers=appetizers
+                    'party-picks.html',
+                    error="You must enter a valid item.",
+                    selected_category=selected_category,
+                    appetizer_list=appetizer_list,
+                    dessert_list=dessert_list,
                 )
 
-            # Check if the user already has an appetizer
-            user_appetizer = next(
-                (entry for entry in appetizers if entry['username'] == session['username']), None
-            )
+            username = session['username']
 
-            if user_appetizer:
-                # Update the user's existing appetizer
-                user_appetizer['appetizer'] = appetizer
-            else:
-                # Add a new appetizer entry for the user
-                entry = {'username': session['username'], 'appetizer': appetizer}
+            # Remove existing user entry from both lists
+            appetizers = [entry for entry in appetizers if entry['username'] != username]
+            desserts = [entry for entry in desserts if entry['username'] != username]
+
+            # Add new entry to the selected category
+            entry = {'username': username, 'item': item}
+            if selected_category == 'Appetizer':
                 appetizers.append(entry)
+            else:
+                desserts.append(entry)
 
-            # Save updated appetizers
+            # Save the updated lists
             save_appetizers(appetizers)
+            save_desserts(desserts)
 
             # Redirect back to avoid resubmission issues
-            return redirect(url_for('appetizer'))
+            return redirect(url_for('partypicks'))
 
-        return render_template('appetizer.html', appetizers=appetizers)
+        return render_template(
+            'party-picks.html',
+            selected_category=selected_category,
+            appetizer_list=appetizer_list,
+            dessert_list=dessert_list,
+        )
 
     return redirect(url_for('home'))  # Redirect to login if not logged in
+
+
+
+def load_desserts():
+    """Load desserts from dessert.json."""
+    try:
+        with open('dessert.json', 'r') as file:
+            return json.load(file)
+    except (FileNotFoundError, json.JSONDecodeError):
+        # Return an empty list if the file doesn't exist or is invalid
+        return []
+
+
+def save_desserts(desserts):
+    """Save desserts to dessert.json."""
+    with open('dessert.json', 'w') as file:
+        json.dump(desserts, file, indent=4)
 
 
 def load_appetizers():

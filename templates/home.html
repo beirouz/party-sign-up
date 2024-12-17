@@ -26,7 +26,7 @@
 <div class="w3-bar w3-black">
   <a href="/" class="w3-bar-item w3-button">Home</a>
   <a href="/dinner" class="w3-bar-item w3-button">Dinner</a>
-  <a href="/appetizer" class="w3-bar-item w3-button">Appetizer</a>
+  <a href="/partypicks" class="w3-bar-item w3-button">Party-Picks</a>
   <a href="/expenses" class="w3-bar-item w3-button">Expenses</a>
   {% if logged_in %}
     <a href="/logout" class="w3-bar-item w3-button">Logout</a>
@@ -35,23 +35,56 @@
 
 <!-- Content -->
 <div class="w3-container w3-center">
-  {% if logged_in %}
-    <h2>Welcome, {{ username }}!</h2>
-    
-    <!-- Event Details Card -->
-    <div class="w3-card-2 event-card">
-      <header class="w3-container w3-green">
-        <h1>Event Details</h1>
-      </header>
+	{% if logged_in %}
+	  <h2>Welcome, {{ username }}!</h2>
+	  
+	  <!-- Event Details Card -->
+	  <div class="w3-card-2 w3-margin-bottom" style="max-width: 600px; margin: 0 auto;">
+		<header class="w3-container w3-green">
+		  <h1>Event Details</h1>
+		</header>
+		<div class="w3-container" style="background-color: #a9a9a9; padding: 20px;">
+		  <p><span class="w3-text-black" style="font-weight: bold;">Address:</span> {{ event.address }}</p>
+		  <p><span class="w3-text-black" style="font-weight: bold;">Agenda:</span> {{ event.agenda }}</p>
+		  <p><span class="w3-text-black" style="font-weight: bold;">Timing:</span> {{ event.timing }}</p>
+		</div>
+	  </div>
 
-      <div class="w3-container" style="background-color: #a9a9a9; padding: 20px;">
-        <p><span class="w3-text-black" style="font-weight: bold;">Address:</span> {{ event.address }}</p>
-        <p><span class="w3-text-black" style="font-weight: bold;">Agenda:</span> {{ event.agenda }}</p>
-        <p><span class="w3-text-black" style="font-weight: bold;">Timing:</span> {{ event.timing }}</p>
-      </div>
-    </div>
+	  <!-- Christmas Party Instructions -->
+	  <div class="w3-card-2 w3-margin-bottom" style="max-width: 600px; margin: 0 auto;">
+		<header class="w3-container w3-blue">
+		  <h1>Christmas Party Instructions</h1>
+		</header>
+		<div class="w3-container w3-light-gray" style="padding: 20px;">
+		  <p>
+			<strong>This web application is designed to plan our Christmas party. Here's what you need to do in each tab:</strong>
+		  </p>
+		  <ul class="w3-ul w3-border w3-white">
+			<li>
+			  <strong>Dinner:</strong> Create your pizza choice. 
+			  Pizzas will be ordered from Pizza Pizza. Toppings are limited to ensure they are kid-friendly. 
+			  A large pizza with the provided options will cost <span class="w3-text-red">$15</span>.
+			</li>
+			<li>
+			  <strong>Party-Picks</strong> Let others know your contribution by bringing a dessert or appetizer 
+			  that serves two families. If you're coming early, bring appetizers; if late, desserts would be preferable.
+			</li>
+			<li>
+			  <strong>Expenses:</strong> Submit any expenses you made (excluding party picks). 
+			  The total expense will be distributed across all families.
+			</li>
+			<li>
+			  In <strong>Dinner</strong> and <strong>Party-Picks</strong> if you resubmit, the previous choice will be overwritten.
+			</li>
+		  </ul>
+		  <p class="w3-margin-top w3-text-dark-gray">
+			<strong>Thank you!</strong><br>
+		  </p>
+		</div>
+	  </div>
 
-  {% else %}
+
+	{% else %}
 	<div class="w3-card w3-padding" 
 		 style="max-width: 400px; width: 90%; margin: 50px auto 0; text-align: center;">
 		<h2>Please Log In</h2>
@@ -68,7 +101,7 @@
 	</div>
 
 
-  {% endif %}
+	{% endif %}
 </div>
 
 </body>
