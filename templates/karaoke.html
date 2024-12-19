@@ -3,38 +3,96 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Karaoke</title>
+  <title>Karaoke Page</title>
   <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <style>
+    /* Ensure consistent box sizing */
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Responsive layout for forms */
+    @media screen and (max-width: 768px) {
+      .form-container {
+        flex-direction: column;
+      }
+      .form-container > div {
+        margin: 10px 0; /* Vertical spacing */
+        flex: 1 1 100%; /* Full width */
+      }
+    }
+
+    /* Fix horizontal overflow */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    /* Adjust padding for smaller screens */
+    .w3-container {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  </style>
 </head>
 <body class="w3-dark-gray">
+
   <!-- Navbar -->
   <div class="w3-bar w3-black">
     <a href="/" class="w3-bar-item w3-button">Home</a>
-    <a href="/karaoke" class="w3-bar-item w3-button">Karake</a>
+    <a href="/karaoke" class="w3-bar-item w3-button">Karaoke</a>
     <a href="/expenses" class="w3-bar-item w3-button">Expenses</a>
     <a href="/logout" class="w3-bar-item w3-button">Logout</a>
   </div>
 
   <!-- Karaoke Section -->
   <div class="w3-container w3-padding">
-    <h3>Add, Edit, or Remove Songs for the Party</h3>
+    <h3>Karaoke Song Management</h3>
 
-    <!-- Error Message -->
+    <!-- Error or Success Messages -->
     {% if error %}
-      <p style="color: red;">{{ error }}</p>
+      <p class="w3-text-red">{{ error }}</p>
     {% endif %}
 
-    <!-- Add Song Form -->
-    <form method="POST" action="/karaoke">
-      <input type="hidden" name="action" value="add">
-      <input 
-        type="text" 
-        name="song" 
-        class="w3-input w3-border w3-light-gray" 
-        placeholder="Enter song name to add" 
-        required>
-      <button type="submit" class="w3-button w3-green w3-margin-top">Add Song</button>
-    </form>
+    <!-- Song Management Options -->
+    <div class="w3-container w3-padding w3-light-gray w3-margin-bottom form-container" style="display: flex; justify-content: space-between; flex-wrap: wrap;">
+      
+      <!-- Add Song Form -->
+      <div class="w3-card w3-padding w3-margin-right" style="flex: 1; min-width: 250px;">
+        <h4>Add Song</h4>
+        <form method="POST" action="/karaoke">
+          <input type="hidden" name="action" value="add">
+          <input 
+            type="text" 
+            name="song" 
+            class="w3-input w3-border w3-margin-top" 
+            placeholder="Enter song name" 
+            required>
+          <input 
+            type="text" 
+            name="youtube_link" 
+            class="w3-input w3-border w3-margin-top" 
+            placeholder="Optional: Enter YouTube link">
+          <button type="submit" class="w3-button w3-green w3-margin-top">Add Song</button>
+        </form>
+      </div>
+
+      <!-- Remove Song Form -->
+      <div class="w3-card w3-padding" style="flex: 1; min-width: 250px;">
+        <h4>Remove Song</h4>
+        <form method="POST" action="/karaoke">
+          <input type="hidden" name="action" value="remove">
+          <input 
+            type="text" 
+            name="song" 
+            class="w3-input w3-border w3-margin-top" 
+            placeholder="Enter song name to remove" 
+            required>
+          <button type="submit" class="w3-button w3-red w3-margin-top">Remove Song</button>
+        </form>
+      </div>
+    </div>
 
     <!-- Song List -->
     <div class="w3-container w3-padding w3-white w3-margin-top w3-responsive">
@@ -43,34 +101,18 @@
         <thead>
           <tr>
             <th>Username</th>
-            <th>Song Name</th>
-            <th>Actions</th>
+            <th>Song</th>
           </tr>
         </thead>
         <tbody>
-          {% for song in songs %}
+          {% for entry in songs %}
             <tr>
-              <td>{{ song['username'] }}</td>
-              <td>{{ song['song'] }}</td>
+              <td>{{ entry['username'] }}</td>
               <td>
-                {% if song['username'] == session['username'] %}
-                  <!-- Edit Song Form -->
-                  <form method="POST" action="/karaoke" style="display:inline;">
-                    <input type="hidden" name="action" value="edit">
-                    <input type="hidden" name="old_song" value="{{ song['song'] }}">
-                    <input 
-                      type="text" 
-                      name="new_song" 
-                      placeholder="New name" 
-                      required>
-                    <button type="submit" class="w3-button w3-blue">Edit</button>
-                  </form>
-                  <!-- Remove Song Form -->
-                  <form method="POST" action="/karaoke" style="display:inline;">
-                    <input type="hidden" name="action" value="remove">
-                    <input type="hidden" name="song" value="{{ song['song'] }}">
-                    <button type="submit" class="w3-button w3-red">Remove</button>
-                  </form>
+                {% if entry['youtube_link'] %}
+                  <a href="{{ entry['youtube_link'] }}" target="_blank">{{ entry['song'] }}</a>
+                {% else %}
+                  {{ entry['song'] }}
                 {% endif %}
               </td>
             </tr>
@@ -79,5 +121,6 @@
       </table>
     </div>
   </div>
+
 </body>
 </html>

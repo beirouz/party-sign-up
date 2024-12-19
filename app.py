@@ -24,20 +24,6 @@ event_details = {
     'timing': 'TBD (Most likely 5:00 pm)'
 }
 
-# File to store orders
-orders_file = 'orders.json'
-
-def load_orders():
-    try:
-        with open(orders_file, 'r') as file:
-            return json.load(file)
-    except FileNotFoundError:
-        return []
-
-def save_orders(orders):
-    with open(orders_file, 'w') as file:
-        json.dump(orders, file, indent=4)
-
 # Route for the Home page (login page and post-login view)
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -60,67 +46,6 @@ def home():
     # If not logged in, just show the login form
     return render_template('home.html', logged_in=False)
 
-@app.route('/dinner', methods=['GET', 'POST'])
-def dinner():
-    if 'logged_in' in session and session['logged_in']:
-        # Define the pizza options
-        crust_types = ['Thin Crust', 'Regular Crust', 'Thick Crust']
-        sauces = ['Tomato Sauce', 'No Sauce']
-        topping_options = ['Fire Roasted Red Peppers', 
-                           'Fresh Mushrooms', 
-                           'Green Olives', 
-                           'Green Peppers', 
-                           'Red Onion', 
-                           'Roasted Garlic', 
-                           'Roma Tomatos',
-                           'Sun Dried Tomatos',
-                           'Butter Chicken',
-                           'Grilled Chicken',
-                           'Bacon Strips',
-                           'Feta Cheese',
-                           'Parmesan Cheese']
-
-        # Load existing orders
-        orders = load_orders()
-
-        if request.method == 'POST':
-            # Collect the pizza order details from the form
-            crust = request.form['crust']
-            sauce = request.form['sauce']
-            toppings = request.form.getlist('toppings')  # Get all selected toppings as a list
-
-            # Check for valid topping count
-            if len(toppings) > 4:
-                return render_template('dinner.html', error="You cannot select more than 4 toppings. Please remove extra toppings.", crust_types=crust_types, sauces=sauces, topping_options=topping_options, orders=orders)
-
-            # Check if the user already has an order
-            user_order = next((order for order in orders if order['username'] == session['username']), None)
-
-            # If user has an existing order, update it, otherwise add a new one
-            if user_order:
-                user_order['crust'] = crust
-                user_order['sauce'] = sauce
-                user_order['toppings'] = toppings
-            else:
-                # Create a new order if the user does not already have one
-                order = {
-                    'username': session['username'],
-                    'crust': crust,
-                    'sauce': sauce,
-                    'toppings': toppings
-                }
-                orders.append(order)
-
-            # Save the updated orders
-            save_orders(orders)
-
-            # Redirect back to the dinner page to show the updated order
-            return redirect(url_for('dinner'))
-
-        # Render the Dinner page with current orders
-        return render_template('dinner.html', crust_types=crust_types, sauces=sauces, topping_options=topping_options, orders=orders)
-
-    return redirect(url_for('home'))  # Redirect to login if not logged in
 
 SONGS_FILE = 'songs.json'
 
@@ -130,7 +55,6 @@ def load_songs():
         with open(SONGS_FILE, 'r') as file:
             return sorted(json.load(file), key=lambda x: x['username'].lower())
     except (FileNotFoundError, json.JSONDecodeError):
-        # Return an empty list if the file doesn't exist or is invalid
         return []
 
 def save_songs(songs):
@@ -149,26 +73,17 @@ def karaoke():
             if action == 'add':
                 # Add a new song
                 song = request.form.get('song', '').strip()
+                youtube_link = request.form.get('youtube_link', '').strip()
+
                 if not song:
                     return render_template('karaoke.html', songs=songs, error="Song name cannot be empty.")
                 
-                # Add song to the list
-                songs.append({'username': username, 'song': song})
-                save_songs(songs)
-                return redirect(url_for('karaoke'))
-
-            elif action == 'edit':
-                # Edit an existing song
-                old_song = request.form.get('old_song', '').strip()
-                new_song = request.form.get('new_song', '').strip()
-                if not new_song:
-                    return render_template('karaoke.html', songs=songs, error="New song name cannot be empty.")
-
-                # Update the song for the user
-                for entry in songs:
-                    if entry['username'] == username and entry['song'] == old_song:
-                        entry['song'] = new_song
-                        break
+                # Add the song with YouTube link
+                songs.append({
+                    'username': username,
+                    'song': song,
+                    'youtube_link': youtube_link
+                })
                 save_songs(songs)
                 return redirect(url_for('karaoke'))
 
@@ -179,11 +94,9 @@ def karaoke():
                 save_songs(songs)
                 return redirect(url_for('karaoke'))
 
-        # Render the page with the updated song list
         return render_template('karaoke.html', songs=songs)
 
-    return redirect(url_for('home'))  # Redirect to login if not logged in
-
+    return redirect(url_for('home'))
 
 # Route for expenses - Expenses
 @app.route('/expenses', methods=['GET', 'POST'])
