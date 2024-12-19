@@ -42,10 +42,12 @@
 		<header class="w3-container w3-green">
 		  <h1>Things to Know</h1>
 		</header>
-		<div class="w3-container" style="background-color: #a9a9a9; padding: 20px;">
-		  <p><span class="w3-text-black" style="font-weight: bold;">Address:</span> {{ event.address }}</p>
-		  <p><span class="w3-text-black" style="font-weight: bold;">Agenda:</span> {{ event.agenda }}</p>
-		  <p><span class="w3-text-black" style="font-weight: bold;">Timing:</span> {{ event.timing }}</p>
+		<div class="w3-container w3-light-gray" style="padding: 20px;">
+			<ul class="w3-ul w3-border w3-white">
+			  <li><strong>Address:</strong> {{ event.address }}</li>
+			  <li><strong>Agenda:</strong> {{ event.agenda }}</li>
+			  <li><strong>Timing:</strong> {{ event.timing }}</li>
+			</ul>  
 		</div>
 	  </div>
 
