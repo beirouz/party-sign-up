@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Karaoke</title>
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+</head>
+<body class="w3-dark-gray">
+  <!-- Navbar -->
+  <div class="w3-bar w3-black">
+    <a href="/" class="w3-bar-item w3-button">Home</a>
+    <a href="/karaoke" class="w3-bar-item w3-button">Karake</a>
+    <a href="/expenses" class="w3-bar-item w3-button">Expenses</a>
+    <a href="/logout" class="w3-bar-item w3-button">Logout</a>
+  </div>
+
+  <!-- Karaoke Section -->
+  <div class="w3-container w3-padding">
+    <h3>Add, Edit, or Remove Songs for the Party</h3>
+
+    <!-- Error Message -->
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <!-- Add Song Form -->
+    <form method="POST" action="/karaoke">
+      <input type="hidden" name="action" value="add">
+      <input 
+        type="text" 
+        name="song" 
+        class="w3-input w3-border w3-light-gray" 
+        placeholder="Enter song name to add" 
+        required>
+      <button type="submit" class="w3-button w3-green w3-margin-top">Add Song</button>
+    </form>
+
+    <!-- Song List -->
+    <div class="w3-container w3-padding w3-white w3-margin-top w3-responsive">
+      <h3>Song List</h3>
+      <table class="w3-table w3-bordered w3-striped">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Song Name</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for song in songs %}
+            <tr>
+              <td>{{ song['username'] }}</td>
+              <td>{{ song['song'] }}</td>
+              <td>
+                {% if song['username'] == session['username'] %}
+                  <!-- Edit Song Form -->
+                  <form method="POST" action="/karaoke" style="display:inline;">
+                    <input type="hidden" name="action" value="edit">
+                    <input type="hidden" name="old_song" value="{{ song['song'] }}">
+                    <input 
+                      type="text" 
+                      name="new_song" 
+                      placeholder="New name" 
+                      required>
+                    <button type="submit" class="w3-button w3-blue">Edit</button>
+                  </form>
+                  <!-- Remove Song Form -->
+                  <form method="POST" action="/karaoke" style="display:inline;">
+                    <input type="hidden" name="action" value="remove">
+                    <input type="hidden" name="song" value="{{ song['song'] }}">
+                    <button type="submit" class="w3-button w3-red">Remove</button>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

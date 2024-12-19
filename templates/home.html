@@ -25,8 +25,7 @@
 <!-- Navbar -->
 <div class="w3-bar w3-black">
   <a href="/" class="w3-bar-item w3-button">Home</a>
-  <a href="/dinner" class="w3-bar-item w3-button">Dinner</a>
-  <a href="/partypicks" class="w3-bar-item w3-button">Party-Picks</a>
+  <a href="/karaoke" class="w3-bar-item w3-button">Karaoke</a>
   <a href="/expenses" class="w3-bar-item w3-button">Expenses</a>
   {% if logged_in %}
     <a href="/logout" class="w3-bar-item w3-button">Logout</a>
@@ -41,7 +40,7 @@
 	  <!-- Event Details Card -->
 	  <div class="w3-card-2 w3-margin-bottom" style="max-width: 600px; margin: 0 auto;">
 		<header class="w3-container w3-green">
-		  <h1>Event Details</h1>
+		  <h1>Things to Know</h1>
 		</header>
 		<div class="w3-container" style="background-color: #a9a9a9; padding: 20px;">
 		  <p><span class="w3-text-black" style="font-weight: bold;">Address:</span> {{ event.address }}</p>
@@ -53,30 +52,17 @@
 	  <!-- Christmas Party Instructions -->
 	  <div class="w3-card-2 w3-margin-bottom" style="max-width: 600px; margin: 0 auto;">
 		<header class="w3-container w3-blue">
-		  <h1>Christmas Party Instructions</h1>
+		  <h1>Things to Do</h1>
 		</header>
 		<div class="w3-container w3-light-gray" style="padding: 20px;">
-		  <p>
-			<strong>This web application is designed to plan our Christmas party. Here's what you need to do in each tab:</strong>
-		  </p>
+
 		  <ul class="w3-ul w3-border w3-white">
 			<li>
-			  <strong>Dinner:</strong> Create your pizza choice. 
-			  Pizzas will be ordered from Pizza Pizza. Toppings are limited to ensure they are kid-friendly. 
-			  A large pizza with the provided options will cost <span class="w3-text-red">$15</span>.
+			  <strong>Karaoke Tab:</strong> Enter your favorite songs to be plaied in the party. 
 			</li>
 			<li>
-			  <strong>Party-Picks</strong> Let others know your contribution by bringing a dessert or appetizer that serves two families, 
-			  ensuring you spend no more than $20. If you're arriving early, appetizers are preferred; if you're coming later, desserts would be ideal. 
-			  <strong><span class="w3-text-red">Please keep in mind that most stores may be closed on the party day, 
-			  so make sure to prepare in advance. </span></strong>
-			</li>
-			<li>
-			  <strong>Expenses:</strong> Submit any expenses you made (excluding party picks). 
+			  <strong>Expenses Tab:</strong> Submit any expenses you made. 
 			  The total expense will be distributed across all families.
-			</li>
-			<li>
-			  In <strong>Dinner</strong> and <strong>Party-Picks</strong> if you resubmit, the previous choice will be overwritten.
 			</li>
 		  </ul>
 		  <p class="w3-margin-top w3-text-dark-gray">

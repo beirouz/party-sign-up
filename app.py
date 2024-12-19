@@ -122,95 +122,67 @@ def dinner():
 
     return redirect(url_for('home'))  # Redirect to login if not logged in
 
-# Route for Appetizer and Dessert
-@app.route('/partypicks', methods=['GET', 'POST'])
-def partypicks():
+SONGS_FILE = 'songs.json'
+
+def load_songs():
+    """Load songs from songs.json."""
+    try:
+        with open(SONGS_FILE, 'r') as file:
+            return sorted(json.load(file), key=lambda x: x['username'].lower())
+    except (FileNotFoundError, json.JSONDecodeError):
+        # Return an empty list if the file doesn't exist or is invalid
+        return []
+
+def save_songs(songs):
+    """Save songs to songs.json sorted by username alphabetically."""
+    with open(SONGS_FILE, 'w') as file:
+        json.dump(sorted(songs, key=lambda x: x['username'].lower()), file, indent=4)
+
+@app.route('/karaoke', methods=['GET', 'POST'])
+def karaoke():
     if 'logged_in' in session and session['logged_in']:
-        # Load existing appetizers and desserts
-        appetizers = load_appetizers()
-        desserts = load_desserts()
+        songs = load_songs()
+        username = session['username']
 
-        # Initialize lists to display both categories
-        appetizer_list = appetizers
-        dessert_list = desserts
+        if request.method == 'POST':
+            action = request.form.get('action')
+            if action == 'add':
+                # Add a new song
+                song = request.form.get('song', '').strip()
+                if not song:
+                    return render_template('karaoke.html', songs=songs, error="Song name cannot be empty.")
+                
+                # Add song to the list
+                songs.append({'username': username, 'song': song})
+                save_songs(songs)
+                return redirect(url_for('karaoke'))
 
-        selected_category = request.form.get('category', 'Appetizer')
+            elif action == 'edit':
+                # Edit an existing song
+                old_song = request.form.get('old_song', '').strip()
+                new_song = request.form.get('new_song', '').strip()
+                if not new_song:
+                    return render_template('karaoke.html', songs=songs, error="New song name cannot be empty.")
 
-        if request.method == 'POST' and 'item' in request.form:
-            # Get the entered item
-            item = request.form['item'].strip()
+                # Update the song for the user
+                for entry in songs:
+                    if entry['username'] == username and entry['song'] == old_song:
+                        entry['song'] = new_song
+                        break
+                save_songs(songs)
+                return redirect(url_for('karaoke'))
 
-            if not item:
-                return render_template(
-                    'party-picks.html',
-                    error="You must enter a valid item.",
-                    selected_category=selected_category,
-                    appetizer_list=appetizer_list,
-                    dessert_list=dessert_list,
-                )
+            elif action == 'remove':
+                # Remove an existing song
+                song = request.form.get('song', '').strip()
+                songs = [entry for entry in songs if not (entry['username'] == username and entry['song'] == song)]
+                save_songs(songs)
+                return redirect(url_for('karaoke'))
 
-            username = session['username']
-
-            # Remove existing user entry from both lists
-            appetizers = [entry for entry in appetizers if entry['username'] != username]
-            desserts = [entry for entry in desserts if entry['username'] != username]
-
-            # Add new entry to the selected category
-            entry = {'username': username, 'item': item}
-            if selected_category == 'Appetizer':
-                appetizers.append(entry)
-            else:
-                desserts.append(entry)
-
-            # Save the updated lists
-            save_appetizers(appetizers)
-            save_desserts(desserts)
-
-            # Redirect back to avoid resubmission issues
-            return redirect(url_for('partypicks'))
-
-        return render_template(
-            'party-picks.html',
-            selected_category=selected_category,
-            appetizer_list=appetizer_list,
-            dessert_list=dessert_list,
-        )
+        # Render the page with the updated song list
+        return render_template('karaoke.html', songs=songs)
 
     return redirect(url_for('home'))  # Redirect to login if not logged in
-
-
-
-def load_desserts():
-    """Load desserts from dessert.json."""
-    try:
-        with open('dessert.json', 'r') as file:
-            return json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        # Return an empty list if the file doesn't exist or is invalid
-        return []
-
-
-def save_desserts(desserts):
-    """Save desserts to dessert.json."""
-    with open('dessert.json', 'w') as file:
-        json.dump(desserts, file, indent=4)
-
-
-def load_appetizers():
-    """Load appetizers from appetizer.json."""
-    try:
-        with open('appetizer.json', 'r') as file:
-            return json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        # Return an empty list if the file doesn't exist or is invalid
-        return []
-
-
-
-def save_appetizers(appetizers):
-    """Save appetizers to appetizer.json."""
-    with open('appetizer.json', 'w') as file:
-        json.dump(appetizers, file, indent=4)
 
 
 # Route for expenses - Expenses
