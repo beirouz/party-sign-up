@@ -108,23 +108,29 @@ def expenses():
         users = list(table_data.keys())  # List of all users in the table
 
         if request.method == 'POST':
-            # Check which form was submitted
+            # Handle adding a new expense
             if "add_expense" in request.form:
-                # Handle adding a new expense
                 item_name = request.form.get("item_name")
                 amount = float(request.form.get("amount", 0))
+                selected_users = request.form.getlist("selected_users")
 
                 if not item_name or amount <= 0:
                     flash("Please provide a valid item name and amount.", "error")
+                elif not selected_users:
+                    flash("Please select at least one user.", "error")
                 else:
-                    # Calculate X and Y
-                    n = len(users)
+                    # Calculate expense distribution
+                    n = len(selected_users)
                     x = round(-1 * amount / n, 2)
-                    y = round(amount + x, 2)
+                    if username in selected_users:
+                        y = round(amount + x, 2)
+                    else:
+                        y = round(amount, 2)
+                        
 
                     # Add new column and update totals
                     new_column_name = f"{item_name}-{username}"
-                    for user in users:
+                    for user in selected_users:
                         table_data[user][new_column_name] = x
                     table_data[username][new_column_name] = y
 
@@ -138,37 +144,9 @@ def expenses():
                     save_expenses(table_data)
                     flash("Expense added successfully!", "success")
 
-            elif "edit_expense" in request.form:
-                # Handle editing an expense
-                column_to_edit = request.form.get("column_to_edit")
-                updated_amount = float(request.form.get("updated_amount", 0))
-
-                if not column_to_edit or updated_amount <= 0:
-                    flash("Please provide a valid column and amount.", "error")
-                elif not column_to_edit.endswith(f"-{username}"):
-                    # Verify if the user is allowed to edit the column
-                    flash("You are not allowed to edit other users' expenses.", "error")
-                else:
-                    # Calculate new X and Y
-                    n = len(users)
-                    x = round(-1 * updated_amount / n, 2)
-                    y = round(updated_amount + x, 2)
-
-                    # Update the column and totals
-                    for user in users:
-                        table_data[user][column_to_edit] = x
-                    table_data[username][column_to_edit] = y
-
-                    for user in users:
-                        table_data[user]["Total"] = round(sum(
-                            value for key, value in table_data[user].items() if key != "Total"
-                        ), 2)
-
-                    save_expenses(table_data)
-                    flash("Expense updated successfully!", "success")
             elif "remove_expense" in request.form:
                 # Handle removing an expense
-                column_to_remove = request.form.get("column_to_remove")
+                column_to_remove = request.form.get("expense_to_remove")
 
                 if not column_to_remove:
                     flash("Please select an expense column to remove.", "error")
@@ -194,14 +172,13 @@ def expenses():
         all_columns = set()
         for user_data in table_data.values():
             all_columns.update(user_data.keys())
-        #all_columns.discard("Total")  # Remove "Total" from being double-rendered as a column header
         all_columns = list(all_columns)  # Ensure columns are iterable
         if "Total" in all_columns:
-            all_columns.remove("Total")  # Remove "Total" temporarily
-            all_columns.append("Total")  # Add "Total" at the end
+            all_columns.remove("Total")
+            all_columns.append("Total")
 
         # Pass the extracted columns and table data to the template
-        return render_template('expenses.html', table_data=table_data, columns=all_columns)
+        return render_template('expenses.html', table_data=table_data, columns=all_columns, users=users)
 
     return redirect(url_for('home'))  # Redirect to login if not logged in
 
