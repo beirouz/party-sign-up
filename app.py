@@ -5,10 +5,9 @@ app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
 # user data (username, password)
-users = {"forouz": "pass!", 
+users = {"forouz": "pass!@", 
          "marzieh": "pass!",
          "elahe": "pass!",
-         "mina": "pass!",
          "vida": "pass!",
          "zahra": "pass!",
          "bahar": "pass!",
