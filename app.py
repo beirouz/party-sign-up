@@ -1,21 +1,19 @@
-import json
+import psycopg2
+from psycopg2.extras import RealDictCursor
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# user data (username, password)
-users = {"forouz": "pass!@", 
-         "marzieh": "pass!",
-         "elahe": "pass!",
-         "vida": "pass!",
-         "zahra": "pass!",
-         "bahar": "pass!",
-         "ela": "pass!",
-         "elmira": "pass!",
-         "kiana": "pass!",
-         "sanaz": "pass!"}
-
+# Database connection
+def get_db_connection():
+    return psycopg2.connect(
+        dbname='party_e6wy',
+        user='party_e6wy_user',
+        password='BRN94u0xDPccMAe2vacvK8mMM3PLAGeJ',
+        host='dpg-ctk821bqf0us739g4ubg-a.oregon-postgres.render.com',
+        port='5432'
+    )
 # event details
 event_details = {
     'address': 'Radiance Party Room, 23 Sheppard Avenue East, North York, ON',
@@ -27,174 +25,150 @@ event_details = {
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
-        # Check if the login is successful
         username = request.form['username']
         password = request.form['password']
-        
-        if username in users and users[username] == password:
+
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT password FROM users WHERE username = %s", (username,))
+        result = cur.fetchone()
+        cur.close()
+        conn.close()
+
+        if result and result[0] == password:
             session['logged_in'] = True
             session['username'] = username
-            return redirect(url_for('home'))  # Redirect to Home after successful login
+            return redirect(url_for('home'))
         else:
             return render_template('home.html', error="Invalid login credentials.")
-    
-    # Display the home page (if logged in, show event details)
+
     if 'logged_in' in session and session['logged_in']:
         return render_template('home.html', logged_in=True, username=session['username'], event=event_details)
 
-    # If not logged in, just show the login form
     return render_template('home.html', logged_in=False)
 
-
-SONGS_FILE = 'songs.json'
-
-def load_songs():
-    """Load songs from songs.json."""
-    try:
-        with open(SONGS_FILE, 'r') as file:
-            return sorted(json.load(file), key=lambda x: x['username'].lower())
-    except (FileNotFoundError, json.JSONDecodeError):
-        return []
-
-def save_songs(songs):
-    """Save songs to songs.json sorted by username alphabetically."""
-    with open(SONGS_FILE, 'w') as file:
-        json.dump(sorted(songs, key=lambda x: x['username'].lower()), file, indent=4)
-
+# Karaoke Route
 @app.route('/karaoke', methods=['GET', 'POST'])
 def karaoke():
     if 'logged_in' in session and session['logged_in']:
-        songs = load_songs()
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+
         username = session['username']
+        cur.execute("SELECT username, song, youtube_link FROM user_songs ORDER BY username")
+        songs = cur.fetchall()
 
         if request.method == 'POST':
             action = request.form.get('action')
+
             if action == 'add':
-                # Add a new song
                 song = request.form.get('song', '').strip()
                 youtube_link = request.form.get('youtube_link', '').strip()
-
                 if not song:
+                    cur.close()
+                    conn.close()
                     return render_template('karaoke.html', songs=songs, error="Song name cannot be empty.")
-                
-                # Add the song with YouTube link
-                songs.append({
-                    'username': username,
-                    'song': song,
-                    'youtube_link': youtube_link
-                })
-                save_songs(songs)
-                return redirect(url_for('karaoke'))
+
+                cur.execute("INSERT INTO user_songs (username, song, youtube_link) VALUES (%s, %s, %s)",
+                            (username, song, youtube_link))
+                conn.commit()
 
             elif action == 'remove':
-                # Remove an existing song
                 song = request.form.get('song', '').strip()
-                songs = [entry for entry in songs if not (entry['username'] == username and entry['song'] == song)]
-                save_songs(songs)
-                return redirect(url_for('karaoke'))
+                cur.execute("DELETE FROM user_songs WHERE username = %s AND song = %s", (username, song))
+                conn.commit()
 
+            cur.execute("SELECT username, song, youtube_link FROM user_songs ORDER BY username")
+            songs = cur.fetchall()
+
+        cur.close()
+        conn.close()
         return render_template('karaoke.html', songs=songs)
 
     return redirect(url_for('home'))
 
-# Route for expenses - Expenses
 @app.route('/expenses', methods=['GET', 'POST'])
 def expenses():
     if 'logged_in' in session and session['logged_in']:
-        # Load existing data
-        table_data = load_expenses()
+        conn = get_db_connection()
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+
         username = session['username']
-        users = list(table_data.keys())  # List of all users in the table
+        cur.execute("SELECT * FROM user_expenses ORDER BY username")
+        expenses = cur.fetchall()
+
+        # Fetch list of all users
+        cur.execute("SELECT username FROM users")
+        users = [user['username'] for user in cur.fetchall()]
 
         if request.method == 'POST':
-            # Handle adding a new expense
-            if "add_expense" in request.form:
+            action = request.form.get('action')
+
+            if action == 'add_expense':
                 item_name = request.form.get("item_name")
                 amount = float(request.form.get("amount", 0))
                 selected_users = request.form.getlist("selected_users")
+
+                # List of all usernames in the database
+                cur.execute("SELECT username FROM users")
+                all_users = [user['username'] for user in cur.fetchall()]
 
                 if not item_name or amount <= 0:
                     flash("Please provide a valid item name and amount.", "error")
                 elif not selected_users:
                     flash("Please select at least one user.", "error")
                 else:
-                    # Calculate expense distribution
+                    # Calculate the expense distribution
                     n = len(selected_users)
-                    x = round(-1 * amount / n, 2)
-                    if username in selected_users:
-                        y = round(amount + x, 2)
-                    else:
-                        y = round(amount, 2)
-                        
+                    per_user_share = round(-1 * amount / n, 2)
+                    payer_share = round(amount + (per_user_share * (n - 1)), 2)
 
-                    # Add new column and update totals
-                    new_column_name = f"{item_name}-{username}"
+                    # Initialize expense data for all users
+                    expense_data = {user: 0 for user in all_users}
+
+                    # Update payer's amount
+                    expense_data[username] = payer_share
+
+                    # Update selected users' amounts
                     for user in selected_users:
-                        table_data[user][new_column_name] = x
-                    table_data[username][new_column_name] = y
+                        if user != username:
+                            expense_data[user] = per_user_share
 
-                    # Update totals
-                    for user in users:
-                        table_data[user]["Total"] = round(sum(
-                            value for key, value in table_data[user].items() if key != "Total"
-                        ), 2)
+                    # Prepare data for the query
+                    values = [username, item_name, amount] + [expense_data[user] for user in all_users]
 
-                    # Save the updated data
-                    save_expenses(table_data)
-                    flash("Expense added successfully!", "success")
+                    # Insert query
+                    query = f"""
+                    INSERT INTO user_expenses (
+                        username, item, amount, {', '.join(all_users)}
+                    ) VALUES (%s, %s, %s, {', '.join(['%s'] * len(all_users))})
+                    """
+                    try:
+                        cur.execute(query, values)
+                        conn.commit()
+                        flash("Expense added successfully.", "success")
+                    except Exception as e:
+                        conn.rollback()
+                        flash(f"Error: {e}", "error")
 
-            elif "remove_expense" in request.form:
-                # Handle removing an expense
-                column_to_remove = request.form.get("expense_to_remove")
+            elif action == 'remove_expense':
+                item_name = request.form.get("item_name")
+                cur.execute(
+                    "DELETE FROM user_expenses WHERE username = %s AND item = %s",
+                    (username, item_name),
+                )
+                conn.commit()
 
-                if not column_to_remove:
-                    flash("Please select an expense column to remove.", "error")
-                elif not column_to_remove.endswith(f"-{username}"):
-                    # Verify if the user is allowed to remove the column
-                    flash("You are not allowed to remove other users' expenses.", "error")
-                else:
-                    # Remove the selected column from each user's data
-                    for user in users:
-                        if column_to_remove in table_data[user]:
-                            del table_data[user][column_to_remove]
+            # Fetch updated expenses
+            cur.execute("SELECT * FROM user_expenses ORDER BY username")
+            expenses = cur.fetchall()
 
-                    # Recalculate totals for all users
-                    for user in users:
-                        table_data[user]["Total"] = round(sum(
-                            value for key, value in table_data[user].items() if key != "Total"
-                        ), 2)
+        cur.close()
+        conn.close()
+        return render_template('expenses.html', table_data=expenses, users=users)
 
-                    save_expenses(table_data)
-                    flash("Expense removed successfully!", "success")
+    return redirect(url_for('home'))
 
-        # Extract all unique columns across the data
-        all_columns = set()
-        for user_data in table_data.values():
-            all_columns.update(user_data.keys())
-        all_columns = list(all_columns)  # Ensure columns are iterable
-        if "Total" in all_columns:
-            all_columns.remove("Total")
-            all_columns.append("Total")
-
-        # Pass the extracted columns and table data to the template
-        return render_template('expenses.html', table_data=table_data, columns=all_columns, users=users)
-
-    return redirect(url_for('home'))  # Redirect to login if not logged in
-
-
-def load_expenses():
-    """Load expense data from the JSON file."""
-    try:
-        with open('expenses.json', "r") as file:
-            return json.load(file)
-    except (FileNotFoundError, json.JSONDecodeError):
-        # Initialize default structure if the file doesn't exist or is invalid
-        return {user: {"Total": 0} for user in users.keys()}
-
-def save_expenses(data):
-    """Save expenses to a JSON file."""
-    with open('expenses.json', 'w') as file:
-        json.dump(data, file, indent=4)
 
 # Route for logging out
 @app.route('/logout')

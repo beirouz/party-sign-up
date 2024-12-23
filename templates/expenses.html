@@ -67,71 +67,88 @@
       {% endif %}
     {% endwith %}
 
-    <!-- Add Expense Form -->
-    <div class="w3-card w3-padding w3-margin-bottom w3-light-gray">
-      <h4>Add Expense</h4>
-      <form method="POST" action="/expenses">
-        <input type="hidden" name="add_expense">
-        <input type="text" name="item_name" class="w3-input w3-border w3-margin-top" placeholder="Enter item name" required>
-        <input type="number" name="amount" step="0.01" class="w3-input w3-border w3-margin-top" placeholder="Enter amount" required>
-        <label for="selected_users" class="w3-margin-top">Who does this expense apply to?</label>
-        <div class="checkbox-group w3-margin-top">
-          <label>
-            <input type="checkbox" id="select_all" onclick="selectAllUsers()">Select All
-          </label>
-          {% for user in users %}
-            <label>
-              <input type="checkbox" name="selected_users" value="{{ user }}"> {{ user }}
-            </label>
-          {% endfor %}
-        </div>
-        <button type="submit" class="w3-button w3-green w3-margin-top">Add Expense</button>
-      </form>
-    </div>
+	<!-- Add Expense Form -->
+	<div class="w3-card w3-padding w3-margin-bottom w3-light-gray">
+	  <h4>Add Expense</h4>
+	  <form method="POST" action="/expenses">
+		<input type="hidden" name="action" value="add_expense">
+		<input type="text" name="item_name" class="w3-input w3-border w3-margin-top" placeholder="Enter item name" required>
+		<input type="number" name="amount" step="0.01" class="w3-input w3-border w3-margin-top" placeholder="Enter amount" required>
+		<label for="selected_users" class="w3-margin-top">Who does this expense apply to?</label>
+		<div class="checkbox-group w3-margin-top">
+		  <label>
+			<input type="checkbox" id="select_all" onclick="selectAllUsers()"> Select All
+		  </label>
+		  {% for user in users %}
+			<label>
+			  <input type="checkbox" name="selected_users" value="{{ user }}"> {{ user }}
+			</label>
+		  {% endfor %}
+		</div>
+		<button type="submit" class="w3-button w3-green w3-margin-top">Add Expense</button>
+	  </form>
+	</div>
+
 
 	<!-- Remove Expense Form -->
 	<div class="w3-card w3-padding w3-margin-bottom w3-light-gray">
 	  <h4>Remove Expense</h4>
 	  <form method="POST" action="/expenses">
-		<input type="hidden" name="remove_expense">
-		<label for="expense_to_remove" class="w3-margin-top">Select Expense to Remove:</label>
-		<select name="expense_to_remove" class="w3-select w3-border w3-margin-top" required>
-		  <option value="" disabled selected>Select Expense</option>
-		  {% for column in columns %}
-			{% if column != "Total" %}
-			  <option value="{{ column }}">{{ column }}</option>
-			{% endif %}
-		  {% endfor %}
-		</select>
+		<input type="hidden" name="action" value="remove_expense">
+          <input 
+            type="text" 
+            name="item_name" 
+            class="w3-input w3-border w3-margin-top" 
+            placeholder="Enter an item to remove" 
+            required>
 		<button type="submit" class="w3-button w3-red w3-margin-top">Remove Expense</button>
 	  </form>
 	</div>
 
+	<!-- Expense Table -->
+	<div class="w3-container w3-padding w3-white w3-margin-top w3-responsive">
+	  <h3>Expense Table</h3>
+	  <table class="w3-table w3-bordered w3-striped">
+		<thead>
+		  <tr>
+			<th>Username</th>
+			<th>Item</th>
+			<th>Amount</th>
+			<th>Forouz</th>
+			<th>Marzieh</th>
+			<th>Elahe</th>
+			<th>Vida</th>
+			<th>Zahra</th>
+			<th>Bahar</th>
+			<th>Ela</th>
+			<th>Elmira</th>
+			<th>Kiana</th>
+			<th>Sanaz</th>
+		  </tr>
+		</thead>
+		<tbody>
+		  <!-- Add additional rows dynamically -->
+		  {% for row in table_data %}
+			<tr>
+			  <td>{{ row.username }}</td>
+			  <td>{{ row.item }}</td>
+			  <td>{{ row.amount }}</td>
+			  <td>{{ row.forouz }}</td>
+			  <td>{{ row.marzieh }}</td>
+			  <td>{{ row.elahe }}</td>
+			  <td>{{ row.vida }}</td>
+			  <td>{{ row.zahra }}</td>
+			  <td>{{ row.bahar }}</td>
+			  <td>{{ row.ela }}</td>
+			  <td>{{ row.elmira }}</td>
+			  <td>{{ row.kiana }}</td>
+			  <td>{{ row.sanaz }}</td>
+			</tr>
+		  {% endfor %}
+		</tbody>
+	  </table>
+	</div>
 
-    <!-- Expense Table -->
-    <div class="w3-container w3-padding w3-white w3-margin-top w3-responsive">
-      <h3>Expense Table</h3>
-      <table class="w3-table w3-bordered w3-striped">
-        <thead>
-          <tr>
-            <th>User</th>
-            {% for column in columns %}
-              <th>{{ column }}</th>
-            {% endfor %}
-          </tr>
-        </thead>
-        <tbody>
-          {% for user, row in table_data.items() %}
-            <tr>
-              <td>{{ user }}</td>
-              {% for column in columns %}
-                <td>{{ row.get(column, 0) }}</td>
-              {% endfor %}
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
   </div>
 
   <script>
