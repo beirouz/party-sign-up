@@ -121,7 +121,10 @@ def expenses():
                     # Calculate the expense distribution
                     n = len(selected_users)
                     per_user_share = round(-1 * amount / n, 2)
-                    payer_share = round(amount + (per_user_share * (n - 1)), 2)
+                    if username in selected_users:
+                        payer_share = round(amount + per_user_share, 2)
+                    else:
+                        payer_share = round(amount, 2)
 
                     # Initialize expense data for all users
                     expense_data = {user: 0 for user in all_users}
