@@ -97,9 +97,9 @@ def expenses():
         cur.execute("SELECT * FROM user_expenses ORDER BY username")
         expenses = cur.fetchall()
 
-        # Fetch list of all users
-        cur.execute("SELECT username FROM users")
-        users = [user['username'] for user in cur.fetchall()]
+        # Fetch list of all users along with their weights
+        cur.execute("SELECT username, weight FROM users")
+        user_weights = {user['username']: user['weight'] for user in cur.fetchall()}
 
         if request.method == 'POST':
             action = request.form.get('action')
@@ -109,42 +109,41 @@ def expenses():
                 amount = float(request.form.get("amount", 0))
                 selected_users = request.form.getlist("selected_users")
 
-                # List of all usernames in the database
-                cur.execute("SELECT username FROM users")
-                all_users = [user['username'] for user in cur.fetchall()]
-
+                # Check input validity
                 if not item_name or amount <= 0:
                     flash("Please provide a valid item name and amount.", "error")
                 elif not selected_users:
                     flash("Please select at least one user.", "error")
                 else:
+                    # Filter weights for selected users and convert to float
+                    selected_weights = {user: float(user_weights[user]) for user in selected_users}
+
+                    # Calculate total weight
+                    total_weight = sum(selected_weights.values())
+
                     # Calculate the expense distribution
-                    n = len(selected_users)
-                    per_user_share = round(-1 * amount / n, 2)
+                    expense_data = {}
+                    for user in selected_users:
+                        if user != username:
+                            user_share = round(-1 * amount * (selected_weights[user] / total_weight), 2)
+                            expense_data[user] = user_share
+
                     if username in selected_users:
-                        payer_share = round(amount + per_user_share, 2)
+                        payer_share = round(-1 * sum(expense_data.values()), 2)
                     else:
                         payer_share = round(amount, 2)
-
-                    # Initialize expense data for all users
-                    expense_data = {user: 0 for user in all_users}
 
                     # Update payer's amount
                     expense_data[username] = payer_share
 
-                    # Update selected users' amounts
-                    for user in selected_users:
-                        if user != username:
-                            expense_data[user] = per_user_share
-
                     # Prepare data for the query
-                    values = [username, item_name, amount] + [expense_data[user] for user in all_users]
+                    values = [username, item_name, amount] + [expense_data.get(user, 0) for user in user_weights.keys()]
 
                     # Insert query
                     query = f"""
                     INSERT INTO user_expenses (
-                        username, item, amount, {', '.join(all_users)}
-                    ) VALUES (%s, %s, %s, {', '.join(['%s'] * len(all_users))})
+                        username, item, amount, {', '.join(user_weights.keys())}
+                    ) VALUES (%s, %s, %s, {', '.join(['%s'] * len(user_weights))})
                     """
                     try:
                         cur.execute(query, values)
@@ -168,7 +167,7 @@ def expenses():
 
         cur.close()
         conn.close()
-        return render_template('expenses.html', table_data=expenses, users=users)
+        return render_template('expenses.html', table_data=expenses, users=user_weights.keys())
 
     return redirect(url_for('home'))
 
